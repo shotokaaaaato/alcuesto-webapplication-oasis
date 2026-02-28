@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WebDNA",
+  "description": "Oasis - Web要素から抽出されたデザインDNAデータ",
+  "type": "object",
+  "required": ["id", "tagName", "styles", "extractedAt"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "DNA固有ID"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "抽出元URL"
+    },
+    "selector": {
+      "type": "string",
+      "description": "CSS セレクタ"
+    },
+    "tagName": {
+      "type": "string",
+      "description": "HTML タグ名"
+    },
+    "textContent": {
+      "type": "string",
+      "description": "要素のテキスト内容（先頭200文字）"
+    },
+    "boundingBox": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      },
+      "required": ["x", "y", "width", "height"]
+    },
+    "styles": {
+      "type": "object",
+      "description": "computedStyle から抽出されたスタイルプロパティ",
+      "properties": {
+        "typography": {
+          "type": "object",
+          "properties": {
+            "fontFamily": { "type": "string" },
+            "fontSize": { "type": "string" },
+            "fontWeight": { "type": "string" },
+            "lineHeight": { "type": "string" },
+            "letterSpacing": { "type": "string" },
+            "textAlign": { "type": "string" },
+            "color": { "type": "string" }
+          }
+        },
+        "layout": {
+          "type": "object",
+          "properties": {
+            "display": { "type": "string" },
+            "position": { "type": "string" },
+            "width": { "type": "string" },
+            "height": { "type": "string" },
+            "margin": { "type": "string" },
+            "padding": { "type": "string" },
+            "flexDirection": { "type": "string" },
+            "justifyContent": { "type": "string" },
+            "alignItems": { "type": "string" },
+            "gap": { "type": "string" }
+          }
+        },
+        "visual": {
+          "type": "object",
+          "properties": {
+            "backgroundColor": { "type": "string" },
+            "borderRadius": { "type": "string" },
+            "border": { "type": "string" },
+            "boxShadow": { "type": "string" },
+            "opacity": { "type": "string" },
+            "overflow": { "type": "string" }
+          }
+        }
+      },
+      "required": ["typography", "layout", "visual"]
+    },
+    "children": {
+      "type": "array",
+      "items": { "$ref": "#" },
+      "description": "子要素のDNA（再帰構造）"
+    },
+    "extractedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

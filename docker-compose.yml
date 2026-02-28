@@ -1,0 +1,28 @@
+services:
+  server:
+    build: ./server
+    container_name: oasis-server
+    ports:
+      - "4000:4000"
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - CLIENT_ORIGIN=http://localhost:3000
+    restart: unless-stopped
+    # Puppeteer 用に共有メモリを拡張
+    shm_size: "512mb"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    container_name: oasis-client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client/src:/app/src
+      - ./client/index.html:/app/index.html
+    depends_on:
+      - server
+    restart: unless-stopped
