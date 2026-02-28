@@ -9,6 +9,11 @@ services:
       - NODE_ENV=production
       - PORT=4000
       - CLIENT_ORIGIN=http://localhost:3000
+      - JWT_SECRET=oasis-jwt-secret-2024
+      - ADMIN_EMAIL=admin@oasis.local
+      - ADMIN_PASSWORD=admin123
+    volumes:
+      - ./server/data:/app/data
     restart: unless-stopped
     # Puppeteer 用に共有メモリを拡張
     shm_size: "512mb"
@@ -23,6 +28,7 @@ services:
     volumes:
       - ./client/src:/app/src
       - ./client/index.html:/app/index.html
+      - ./client/public:/app/public
     depends_on:
       - server
     restart: unless-stopped
