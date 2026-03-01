@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 /**
- * インタラクティブDNAノード
+ * インタラクティブデザインノード
  * - Standard: マットな陶器風、ホバーで浮上
  * - Forest: 翡翠（ひすい）風 MeshPhysicalMaterial、ホバーで波打ち
  */

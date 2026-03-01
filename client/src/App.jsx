@@ -4,6 +4,15 @@ import TopPage from "./pages/TopPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import CanvasPage from "./pages/CanvasPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import SemanticExporterPage from "./pages/SemanticExporterPage";
+import FigmaImportPage from "./pages/FigmaImportPage";
+import DnaLibraryPage from "./pages/DnaLibraryPage";
+import SettingsPage from "./pages/SettingsPage";
+import FigmaGuidePage from "./pages/FigmaGuidePage";
+import PartsPage from "./pages/PartsPage";
+import CodeLibraryPage from "./pages/CodeLibraryPage";
+import CompositionWizardPage from "./pages/CompositionWizardPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -36,6 +45,78 @@ export default function App() {
         element={
           <ProtectedRoute>
             <CanvasPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <ProtectedRoute>
+            <AnalyticsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/export"
+        element={
+          <ProtectedRoute>
+            <SemanticExporterPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/figma-import"
+        element={
+          <ProtectedRoute>
+            <FigmaImportPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/library"
+        element={
+          <ProtectedRoute>
+            <DnaLibraryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/figma-guide"
+        element={
+          <ProtectedRoute>
+            <FigmaGuidePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/parts"
+        element={
+          <ProtectedRoute>
+            <PartsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/code-library"
+        element={
+          <ProtectedRoute>
+            <CodeLibraryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/compose"
+        element={
+          <ProtectedRoute>
+            <CompositionWizardPage />
           </ProtectedRoute>
         }
       />

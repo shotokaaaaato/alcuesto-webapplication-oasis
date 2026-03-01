@@ -2,8 +2,8 @@ const puppeteer = require("puppeteer");
 const { randomUUID } = require("crypto");
 
 /**
- * Oasis DNA Extractor
- * 指定URLの要素から computedStyle を抽出し、DNAデータとして返す
+ * Oasis デザイン Extractor
+ * 指定URLの要素から computedStyle を抽出し、デザインデータとして返す
  */
 
 // 抽出対象のスタイルプロパティ定義
@@ -61,7 +61,7 @@ async function getBrowser() {
  * @param {string} url - 対象ページURL
  * @param {string} selector - CSSセレクタ
  * @param {{ depth?: number }} options - 抽出オプション
- * @returns {Promise<object>} DNAデータ
+ * @returns {Promise<object>} デザインデータ
  */
 async function extractDNA(url, selector, options = {}) {
   const { depth = 0 } = options;
@@ -97,6 +97,7 @@ async function extractDNA(url, selector, options = {}) {
             tagName: el.tagName.toLowerCase(),
             selector: buildSelector(el),
             textContent: (el.textContent || "").trim().slice(0, 200),
+            outerHTML: el.outerHTML.slice(0, 50000),
             boundingBox: {
               x: Math.round(rect.x),
               y: Math.round(rect.y),
@@ -169,7 +170,7 @@ async function extractDNA(url, selector, options = {}) {
 /**
  * ページ全体の主要要素を自動検出して抽出
  * @param {string} url - 対象ページURL
- * @returns {Promise<object[]>} DNAデータの配列
+ * @returns {Promise<object[]>} デザインデータの配列
  */
 async function extractPageDNA(url) {
   const instance = await getBrowser();
@@ -229,6 +230,7 @@ async function extractPageDNA(url) {
               tagName: el.tagName.toLowerCase(),
               selector: sel,
               textContent: (el.textContent || "").trim().slice(0, 200),
+              outerHTML: el.outerHTML.slice(0, 50000),
               boundingBox: {
                 x: Math.round(rect.x),
                 y: Math.round(rect.y),

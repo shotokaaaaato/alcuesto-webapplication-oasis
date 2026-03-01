@@ -450,7 +450,7 @@ function PalmInstance({ scene, baseScale, pos, rot, sFactor }) {
 
 /* ── 切り株メニュー（泉とキャンピングカーの間に配置） ── */
 const DEFAULT_STUMP_MENUS = [
-  { key: "extract", label: "DNA採取" },
+  { key: "extract", label: "デザイン採取" },
   { key: "settings", label: "環境設定" },
   { key: "export", label: "コード出力" },
 ];

@@ -71,12 +71,12 @@ export default function CanvasPage() {
               {isForest
                 ? "森のテラリウム"
                 : activePanel === "extract"
-                ? "DNA 抽出"
+                ? "デザイン抽出"
                 : activePanel === "settings"
                 ? "環境設定"
                 : activePanel === "export"
                 ? "コード出力"
-                : "Web DNA のデジタルテラリウム"}
+                : "デザインのデジタルテラリウム"}
             </p>
           </div>
 
@@ -198,7 +198,7 @@ function SettingsPanel({ biome, onBiomeChange }) {
               <span className="text-lg">{b.icon}</span>
               <div>
                 <div className="text-sm font-medium">{b.label}</div>
-                <div className="text-[10px] opacity-70">{b.desc}</div>
+                <div className="text-[12px] opacity-70">{b.desc}</div>
               </div>
             </div>
           </button>
@@ -214,7 +214,7 @@ function ExportPanel() {
     <div className="flex-1 p-4 overflow-y-auto">
       <h2 className="text-sm font-semibold text-[#8B6914] mb-2">コード出力</h2>
       <p className="text-xs text-[#8A7E6B] mb-4">
-        DNAノードを選択して、CSSコードを出力できます。
+        デザインノードを選択して、CSSコードを出力できます。
       </p>
       <div className="p-3 rounded-lg border border-[#DDD0B8] bg-white/30 text-xs text-[#6B5E4F] space-y-1">
         <p>1. 3Dシーン上のノードをクリック</p>

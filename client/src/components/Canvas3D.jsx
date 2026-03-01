@@ -55,7 +55,7 @@ export default function Canvas3D({ dnaData, biome = "standard", selectedId, onSe
         color={isForest ? "#001a00" : "#8B6914"}
       />
 
-      {/* DNA ノード */}
+      {/* デザインノード */}
       {dnaData.map((dna, i) => (
         <DnaNode
           key={dna.id}

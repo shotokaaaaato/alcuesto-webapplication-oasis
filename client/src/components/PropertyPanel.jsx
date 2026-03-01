@@ -1,5 +1,5 @@
 /**
- * 右側プロパティパネル — 選択されたDNAノードの詳細を日本語で表示
+ * 右側プロパティパネル — 選択されたデザインノードの詳細を日本語で表示
  */
 export default function PropertyPanel({ dna, biome, onClose }) {
   if (!dna) return null;
@@ -23,7 +23,7 @@ export default function PropertyPanel({ dna, biome, onClose }) {
           <span className={`text-sm font-mono font-bold ${accentText}`}>
             &lt;{dna.tagName}&gt;
           </span>
-          <p className={`text-[10px] mt-0.5 truncate max-w-[200px] ${
+          <p className={`text-[12px] mt-0.5 truncate max-w-[200px] ${
             isForest ? "text-[#4a7a30]" : "text-[#8A7E6B]"
           }`}>
             {dna.selector}
@@ -45,7 +45,7 @@ export default function PropertyPanel({ dna, biome, onClose }) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div>
           <SectionTitle label="識別子" accent={accent} />
-          <p className={`text-[11px] font-mono break-all ${
+          <p className={`text-[12px] font-mono break-all ${
             isForest ? "text-[#8ece5a]" : "text-[#6B5E4F]"
           }`}>{dna.id}</p>
         </div>
@@ -97,7 +97,7 @@ export default function PropertyPanel({ dna, biome, onClose }) {
         {dna.textContent && (
           <div>
             <SectionTitle label="テキスト内容" accent={accent} />
-            <p className={`text-[11px] p-2 rounded break-words ${
+            <p className={`text-[12px] p-2 rounded break-words ${
               isForest
                 ? "text-[#8ece5a] bg-[#001a08]/60"
                 : "text-[#6B5E4F] bg-[#F0E8D8]"
@@ -134,7 +134,7 @@ export default function PropertyPanel({ dna, biome, onClose }) {
 
 function SectionTitle({ label, accent }) {
   return (
-    <h3 className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: accent }}>
+    <h3 className="text-[12px] font-semibold uppercase tracking-wider mb-1" style={{ color: accent }}>
       {label}
     </h3>
   );
@@ -142,7 +142,7 @@ function SectionTitle({ label, accent }) {
 
 function PropRow({ label, value, isColor, isForest }) {
   return (
-    <div className="flex items-center justify-between text-[11px]">
+    <div className="flex items-center justify-between text-[12px]">
       <span className={isForest ? "text-[#4a7a30]" : "text-[#8A7E6B]"}>{camelToKebab(label)}</span>
       <span className={`font-mono flex items-center gap-1.5 ${
         isForest ? "text-[#c4e87c]" : "text-[#4A3F35]"

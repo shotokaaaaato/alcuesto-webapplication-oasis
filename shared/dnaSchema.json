@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "WebDNA",
-  "description": "Oasis - Web要素から抽出されたデザインDNAデータ",
+  "title": "WebDesign",
+  "description": "OASIS - Web要素から抽出されたデザインデータ",
   "type": "object",
   "required": ["id", "tagName", "styles", "extractedAt"],
   "properties": {
     "id": {
       "type": "string",
-      "description": "DNA固有ID"
+      "description": "デザイン固有ID"
     },
     "url": {
       "type": "string",
@@ -84,7 +84,7 @@
     "children": {
       "type": "array",
       "items": { "$ref": "#" },
-      "description": "子要素のDNA（再帰構造）"
+      "description": "子要素のデザイン（再帰構造）"
     },
     "extractedAt": {
       "type": "string",

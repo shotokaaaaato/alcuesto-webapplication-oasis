@@ -63,7 +63,7 @@ export default function LoginPage() {
               OASIS
             </motion.h1>
             <p className="text-xs text-[#C49A6C] mt-1 tracking-wide">
-              Web DNA のデジタルテラリウム
+              デザインのデジタルテラリウム
             </p>
           </div>
 
@@ -160,7 +160,7 @@ export default function LoginPage() {
 
             {/* 管理者ログインヒント */}
             {mode === "login" && (
-              <p className="text-[10px] text-center text-[#C49A6C]/60 mt-2">
+              <p className="text-[12px] text-center text-[#C49A6C]/60 mt-2">
                 管理者: admin@oasis.local / admin123
               </p>
             )}

@@ -1,56 +1,75 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 
 const MENU_CARDS = [
+  // ── 第0グループ（ページ制作） ──
+  {
+    id: "compose",
+    title: "ページ制作",
+    desc: "構成先行型ワークフローで AI × Figma デザインから 1 枚のページを構築",
+    icon: "📐",
+    color: "from-[#7c3aed] to-[#6d28d9]",
+    span: "col-span-2",
+  },
+  // ── 第1グループ（インポート系） ──
   {
     id: "dna",
-    title: "DNA採取",
-    desc: "WebサイトのURLからデザインDNAを抽出",
-    icon: "🧬",
+    title: "Figma インポート",
+    desc: "全ページを一覧化。既存デザインを元に下層ページを AI 生成",
+    icon: "🎨",
     color: "from-[#3aafc9] to-[#2a8fa9]",
     span: "col-span-2",
   },
+  // ── 第2グループ（資産・分析系） ──
   {
-    id: "canvas",
-    title: "3Dキャンバス",
-    desc: "DNAをテラリウム空間で可視化",
-    icon: "🎨",
-    color: "from-[#7ab83e] to-[#5a9828]",
+    id: "parts",
+    title: "パーツ一覧",
+    desc: "テンプレートパーツを管理。Figma データ・コード Zip エクスポート",
+    icon: "🧩",
+    color: "from-[#ef4444] to-[#dc2626]",
     span: "col-span-1",
   },
   {
-    id: "figma",
-    title: "Figma連携",
-    desc: "デザインをFigmaに直接エクスポート",
-    icon: "🔗",
-    color: "from-[#a259ff] to-[#7c3aed]",
-    span: "col-span-1",
-  },
-  {
-    id: "export",
-    title: "コード出力",
-    desc: "CSSコードとしてエクスポート",
+    id: "code-library",
+    title: "コードライブラリ",
+    desc: "AI 生成コードの一覧管理・Zip エクスポート",
     icon: "📋",
     color: "from-[#D4A76A] to-[#B8944C]",
     span: "col-span-1",
   },
   {
-    id: "settings",
-    title: "環境設定",
-    desc: "バイオームやテーマのカスタマイズ",
-    icon: "⚙️",
-    color: "from-[#6B7280] to-[#4B5563]",
+    id: "library",
+    title: "デザインライブラリ",
+    desc: "抽出した Figma デザインとアセットの管理・閲覧",
+    icon: "📚",
+    color: "from-[#f59e0b] to-[#d97706]",
     span: "col-span-1",
   },
   {
-    id: "library",
-    title: "DNAライブラリ",
-    desc: "保存したDNAコレクションを管理",
-    icon: "📚",
-    color: "from-[#f59e0b] to-[#d97706]",
-    span: "col-span-2",
+    id: "analytics",
+    title: "OASIS アナリティクス",
+    desc: "制作傾向を 3D 空間で可視化。デザインの自己分析",
+    icon: "📊",
+    color: "from-[#7ab83e] to-[#5a9828]",
+    span: "col-span-1",
+  },
+  // ── 第3グループ（設定・ガイド系） ──
+  {
+    id: "figma-guide",
+    title: "Figmaプラグインについて",
+    desc: "プラグインのダウンロード・インストール手順と JWT 認証",
+    icon: "🔌",
+    color: "from-[#a259ff] to-[#7c3aed]",
+    span: "col-span-1",
+  },
+  {
+    id: "settings",
+    title: "環境設定",
+    desc: "AI プロバイダー API キー・Figma トークンの管理",
+    icon: "⚙️",
+    color: "from-[#6B7280] to-[#4B5563]",
+    span: "col-span-1",
   },
 ];
 
@@ -74,16 +93,19 @@ const cardVariants = {
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [hoveredId, setHoveredId] = useState(null);
 
   const isAdmin = user?.role === "admin";
   const initial = (user?.name || user?.email || "U").charAt(0).toUpperCase();
 
   function handleCardClick(id) {
-    if (id === "canvas") {
-      navigate("/canvas");
-    }
-    // TODO: 各サービスへの遷移
+    if (id === "compose") navigate("/compose");
+    if (id === "dna") navigate("/figma-import");
+    if (id === "analytics") navigate("/analytics");
+    if (id === "figma-guide") navigate("/figma-guide");
+    if (id === "code-library") navigate("/code-library");
+    if (id === "parts") navigate("/parts");
+    if (id === "library") navigate("/library");
+    if (id === "settings") navigate("/settings");
   }
 
   function handleLogout() {
@@ -94,7 +116,7 @@ export default function DashboardPage() {
   return (
     <div
       className="min-h-screen w-screen bg-[#FAF3E6]"
-      style={{ fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif" }}
+      style={{ fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif", fontSize: 15 }}
     >
       {/* ヘッダー */}
       <header className="sticky top-0 z-50 bg-[#FAF3E6]/80 backdrop-blur-xl border-b border-[#E8D5B0]/50">
@@ -106,13 +128,13 @@ export default function DashboardPage() {
             >
               OASIS
             </h1>
-            <span className="text-[10px] text-[#C49A6C] tracking-wide border-l border-[#D4A76A]/30 pl-3">
+            <span className="text-[12px] text-[#C49A6C] tracking-wide border-l border-[#D4A76A]/30 pl-3">
               Dashboard
             </span>
           </div>
           <div className="flex items-center gap-4">
             {isAdmin && (
-              <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[#FFD700]/20 text-[#8B6914] border border-[#FFD700]/40 tracking-wider">
+              <span className="px-2 py-0.5 text-[12px] font-bold rounded-full bg-[#FFD700]/20 text-[#8B6914] border border-[#FFD700]/40 tracking-wider">
                 ADMIN
               </span>
             )}
@@ -166,8 +188,6 @@ export default function DashboardPage() {
               variants={cardVariants}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
               whileTap={{ scale: 0.97 }}
-              onHoverStart={() => setHoveredId(card.id)}
-              onHoverEnd={() => setHoveredId(null)}
               onClick={() => handleCardClick(card.id)}
               className={`${card.span} relative rounded-2xl cursor-pointer overflow-hidden group`}
             >
@@ -182,17 +202,9 @@ export default function DashboardPage() {
               {/* コンテンツ */}
               <div className="relative z-10 h-full p-6 flex flex-col justify-between">
                 <div>
-                  <motion.span
-                    className="text-3xl block mb-3"
-                    animate={
-                      hoveredId === card.id
-                        ? { scale: 1.2, rotate: [0, -10, 10, 0] }
-                        : { scale: 1, rotate: 0 }
-                    }
-                    transition={{ duration: 0.4 }}
-                  >
+                  <span className="text-3xl block mb-3">
                     {card.icon}
-                  </motion.span>
+                  </span>
                   <h3 className="text-lg font-bold text-white tracking-wide">
                     {card.title}
                   </h3>
@@ -201,42 +213,10 @@ export default function DashboardPage() {
                   {card.desc}
                 </p>
               </div>
-
-              {/* ホバー時の光沢エフェクト */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 pointer-events-none"
-                initial={{ x: "-100%" }}
-                animate={hoveredId === card.id ? { x: "100%" } : { x: "-100%" }}
-                transition={{ duration: 0.6 }}
-              />
             </motion.div>
           ))}
         </motion.div>
 
-        {/* 最近の活動（プレースホルダー） */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-8 p-6 rounded-2xl bg-white/50 border border-[#E8D5B0]/50"
-        >
-          <h3 className="text-sm font-semibold text-[#8B6914] mb-3">最近の活動</h3>
-          <div className="space-y-3">
-            {[
-              { text: "example.com のDNAを採取しました", time: "2分前" },
-              { text: "砂漠バイオームでテラリウムを更新", time: "1時間前" },
-              { text: "CSSコードをエクスポートしました", time: "昨日" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between py-2 border-b border-[#E8D5B0]/30 last:border-b-0"
-              >
-                <span className="text-sm text-[#5A4E3A]">{item.text}</span>
-                <span className="text-xs text-[#C49A6C]">{item.time}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </main>
     </div>
   );

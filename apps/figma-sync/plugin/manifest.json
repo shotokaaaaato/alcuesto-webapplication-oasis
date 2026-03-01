@@ -1,0 +1,13 @@
+{
+  "name": "OASIS Sync Tool",
+  "id": "oasis-sync-tool",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "documentAccess": "dynamic-page",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "OASIS Server との通信に使用します（デザインデータの取得・Local Styles 同期）"
+  }
+}

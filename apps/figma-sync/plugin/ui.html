@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Inter, "Noto Sans JP", sans-serif;
+    font-size: 12px;
+    color: #333;
+    background: #fafafa;
+    padding: 16px;
+  }
+  h1 {
+    font-size: 16px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #a259ff, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+  .subtitle { color: #888; font-size: 11px; margin-bottom: 16px; }
+  label { display: block; font-size: 11px; color: #666; margin-bottom: 4px; font-weight: 600; }
+  input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: #a259ff; }
+  .field { margin-bottom: 14px; }
+  .hint { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #a259ff, #7c3aed);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .status {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .status.loading { background: #f0f0ff; color: #7c3aed; }
+  .status.success { background: #ecfdf5; color: #059669; }
+  .status.error { background: #fef2f2; color: #dc2626; }
+  .status.warning { background: #fffbeb; color: #b45309; }
+  .preview-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+  }
+  .color-swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    flex-shrink: 0;
+  }
+  .preview-label { font-size: 11px; color: #555; }
+  .preview-section { margin-top: 12px; margin-bottom: 8px; }
+  .preview-section h3 { font-size: 11px; font-weight: 700; color: #a259ff; margin-bottom: 6px; }
+  .count-badge {
+    display: inline-block;
+    background: #f3e8ff;
+    color: #7c3aed;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1>OASIS Sync Tool</h1>
+<p class="subtitle">デザイントークンを Local Styles として登録</p>
+
+<div class="field">
+  <label>認証トークン (JWT)</label>
+  <input id="authToken" type="password" placeholder="OASIS からコピーしたトークンを貼り付け" />
+  <p class="hint">OASIS の「Figma に書き出し」モーダルからコピーできます</p>
+</div>
+
+<button class="btn-primary" id="btnSync" onclick="startSync()">Figma に同期</button>
+
+<div id="previewArea" style="display:none">
+  <div class="preview-section" id="colorPreview"></div>
+  <div class="preview-section" id="typoPreview"></div>
+</div>
+
+<div id="statusArea"></div>
+
+<script>
+  var SERVER_URL = "http://localhost:4000";
+
+  function startSync() {
+    var authToken = document.getElementById("authToken").value.trim();
+    if (!authToken) {
+      showStatus("認証トークンを入力してください", "error");
+      return;
+    }
+
+    document.getElementById("btnSync").disabled = true;
+    showStatus("デザインデータを取得中...", "loading");
+
+    // 1. サーバーからスタイルデータを取得
+    fetch(SERVER_URL + "/api/figma/plugin-styles", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + authToken,
+      },
+      body: JSON.stringify({}),
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var paintStyles = data.paintStyles || [];
+        var textStyles = data.textStyles || [];
+
+        if (paintStyles.length === 0 && textStyles.length === 0) {
+          showStatus("同期するスタイルがありません。先に OASIS でデザインを取り込んでください。", "error");
+          document.getElementById("btnSync").disabled = false;
+          return;
+        }
+
+        // プレビュー表示
+        renderPreview(paintStyles, textStyles);
+        showStatus("Figma にスタイルを同期中...\nスタイル数によっては数分かかる場合があります", "loading");
+
+        // 2. Figma Plugin (code.js) にデータを送信
+        parent.postMessage({
+          pluginMessage: {
+            type: "sync-styles",
+            paintStyles: paintStyles,
+            textStyles: textStyles,
+          },
+        }, "*");
+      })
+      .catch(function (err) {
+        showStatus("読み込み失敗: " + err.message, "error");
+        document.getElementById("btnSync").disabled = false;
+      });
+  }
+
+  // ── プレビュー描画 ────────────────────────────
+  function renderPreview(paintStyles, textStyles) {
+    var area = document.getElementById("previewArea");
+    area.style.display = "block";
+
+    var colorDiv = document.getElementById("colorPreview");
+    colorDiv.innerHTML = '<h3>Paint Styles <span class="count-badge">' + paintStyles.length + '</span></h3>';
+    paintStyles.forEach(function (ps) {
+      var c = ps.paint.color;
+      var hex = "rgb(" + Math.round(c.r * 255) + ", " + Math.round(c.g * 255) + ", " + Math.round(c.b * 255) + ")";
+      colorDiv.innerHTML += '<div class="preview-row">' +
+        '<div class="color-swatch" style="background:' + hex + '"></div>' +
+        '<span class="preview-label">' + ps.name + '</span>' +
+        '</div>';
+    });
+
+    var typoDiv = document.getElementById("typoPreview");
+    typoDiv.innerHTML = '<h3>Text Styles <span class="count-badge">' + textStyles.length + '</span></h3>';
+    textStyles.forEach(function (ts) {
+      var fontSize = Math.min(ts.fontSize, 16);
+      typoDiv.innerHTML += '<div class="preview-row">' +
+        '<span class="preview-label" style="font-size:' + fontSize + 'px; font-weight:bold;">Aa</span>' +
+        '<span class="preview-label">' + ts.name + ' — ' + ts.fontName.family + ' ' + ts.fontName.style + ' ' + ts.fontSize + 'px</span>' +
+        '</div>';
+    });
+  }
+
+  // ── Plugin からの結果受信 ─────────────────────
+  window.onmessage = function (event) {
+    var msg = event.data.pluginMessage;
+    if (!msg) return;
+
+    if (msg.type === "sync-progress") {
+      showStatus(msg.text, "loading");
+      return;
+    }
+
+    if (msg.type === "sync-result") {
+      var c = msg.colors;
+      var t = msg.typography;
+      var subs = msg.fontSubstitutions || [];
+      var text = "同期完了!\n";
+      text += "Paint Styles: " + c.created + "件 作成, " + c.updated + "件 更新";
+      if (c.errors.length > 0) text += " (" + c.errors.length + "件 エラー)";
+      text += "\nText Styles: " + t.created + "件 作成, " + t.updated + "件 更新";
+      if (t.errors.length > 0) text += " (" + t.errors.length + "件 エラー)";
+
+      // フォント置換警告（Adobe風）
+      if (subs.length > 0) {
+        text += "\n\n⚠ フォントの自動置換 (" + subs.length + "件)\n";
+        text += "未インストールのフォントは代替フォントに置換されました:\n";
+        var shown = {};
+        subs.forEach(function (s) {
+          var key = s.original + " → " + s.resolved;
+          if (!shown[key]) {
+            text += "  " + s.original + " → " + s.resolved + "\n";
+            shown[key] = true;
+          }
+        });
+      }
+
+      var hasErrors = c.errors.length > 0 || t.errors.length > 0;
+      if (hasErrors) {
+        text += "\n\nエラー詳細:\n";
+        c.errors.concat(t.errors).forEach(function (e) { text += "- " + e + "\n"; });
+      }
+
+      showStatus(text, hasErrors ? "error" : (subs.length > 0 ? "warning" : "success"));
+      document.getElementById("btnSync").disabled = false;
+    }
+  };
+
+  function showStatus(text, type) {
+    var area = document.getElementById("statusArea");
+    area.className = "status " + type;
+    area.style.whiteSpace = "pre-wrap";
+    area.textContent = text;
+  }
+</script>
+
+</body>
+</html>

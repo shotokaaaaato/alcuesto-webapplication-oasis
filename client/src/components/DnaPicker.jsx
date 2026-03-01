@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 /**
- * DNA 抽出パネル — URLとセレクタを入力してDNAを抽出するUI
+ * デザイン抽出パネル — URLとセレクタを入力してデザインを抽出するUI
  */
 export default function DnaPicker({ biome, onExtracted }) {
   const [url, setUrl] = useState("");
@@ -49,7 +49,7 @@ export default function DnaPicker({ biome, onExtracted }) {
     <div className="flex-1 p-4 overflow-y-auto">
       <h2 className={`text-sm font-semibold mb-3 transition-colors duration-500 ${
         isForest ? "text-[#8ece5a]" : "text-[#6B5E4F]"
-      }`}>DNA 抽出</h2>
+      }`}>デザイン採取</h2>
 
       {/* モード切替 */}
       <div className="flex gap-1 mb-3">
@@ -124,7 +124,7 @@ export default function DnaPicker({ biome, onExtracted }) {
               : "bg-[#C49A6C]/15 text-[#C49A6C] border-[#C49A6C]/40 hover:bg-[#C49A6C]/25"
           }`}
         >
-          {loading ? "抽出中..." : "DNAを抽出"}
+          {loading ? "抽出中..." : "デザインを抽出"}
         </button>
       </form>
 
