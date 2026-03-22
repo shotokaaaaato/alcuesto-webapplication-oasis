@@ -8,12 +8,6 @@ const CONTENT_MODES = [
   { value: "manual", label: "自分で入力", desc: "テキストを手動で入力します" },
 ];
 
-const INHERIT_ITEMS = [
-  { key: "inheritColors", label: "配色", desc: "元デザインのカラーパレットを継承" },
-  { key: "inheritFonts", label: "フォント", desc: "元デザインのフォントファミリーを継承" },
-  { key: "inheritLayout", label: "配置・レイアウト", desc: "元デザインの配置構造を踏襲" },
-];
-
 const CLONE_CONTENT_OPTIONS = [
   { value: "keep", label: "そのまま使用", desc: "テキスト・画像を元デザインそのまま流用" },
   { value: "replace", label: "テキスト・画像を入れ替え", desc: "レイアウトは維持し、AI がテキストと画像を新しいものに差し替え" },
@@ -24,9 +18,6 @@ export default function ReferenceConfigPanel({ sections: initialSections, onComp
     initialSections.map((s) => ({
       ...s,
       referenceConfig: s.referenceConfig || {
-        inheritColors: true,
-        inheritFonts: true,
-        inheritLayout: false,
         contentMode: "ai",
         manualContent: "",
         customInstructions: "",
@@ -256,32 +247,6 @@ export default function ReferenceConfigPanel({ sections: initialSections, onComp
               <p className="text-[12px] text-amber-700 leading-relaxed">
                 <strong>API クレジット消費:</strong> どのコンテンツモードを選択しても、セクション生成時に AI モデルの API クレジットが消費されます。
               </p>
-            </div>
-
-            {/* ── 継承設定 ── */}
-            <div className="mb-6">
-              <h4 className="text-[13px] font-bold text-[#8B6914] mb-3">
-                デザイン属性の継承
-              </h4>
-              <div className="space-y-2">
-                {INHERIT_ITEMS.map((item) => (
-                  <label
-                    key={item.key}
-                    className="flex items-start gap-3 p-3 rounded-xl bg-white/40 border border-[#E8D5B0]/30 cursor-pointer hover:bg-white/60 transition-all"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={activeSection.referenceConfig?.[item.key] || false}
-                      onChange={(e) => updateConfig(activeSection.id, item.key, e.target.checked)}
-                      className="mt-0.5 w-4 h-4 rounded border-[#D4A76A]/50 text-[#D4A76A] focus:ring-[#D4A76A]/30"
-                    />
-                    <div>
-                      <span className="text-[13px] font-semibold text-[#5A4E3A]">{item.label}</span>
-                      <p className="text-[11px] text-[#8A7E6B] mt-0.5">{item.desc}</p>
-                    </div>
-                  </label>
-                ))}
-              </div>
             </div>
 
             {/* ── コンテンツ生成モード ── */}

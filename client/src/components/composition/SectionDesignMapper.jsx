@@ -5,7 +5,6 @@ import DesignPreviewModal from "./DesignPreviewModal";
 
 const MODE_OPTIONS = [
   { value: "clone", label: "完全再現", desc: "構造・コードを 100% 流用（AI 介在なし）", color: "#3b82f6" },
-  { value: "reference", label: "デザイン参考", desc: "配置・アニメ・装飾を継承し AI が再構築", color: "#7c3aed" },
   { value: "none", label: "参照なし", desc: "AI がラベルのみから新規生成", color: "#8A7E6B" },
 ];
 
@@ -23,7 +22,7 @@ export default function SectionDesignMapper({ sections: initialSections, dnaLibr
     setSections((prev) =>
       prev.map((s) =>
         s.id === activeSection
-          ? { ...s, designRef: { dnaId, deviceFrame: null, elementIndices }, mode: s.mode === "none" ? "reference" : s.mode }
+          ? { ...s, designRef: { dnaId, deviceFrame: null, elementIndices }, mode: s.mode === "none" ? "clone" : s.mode }
           : s
       )
     );
@@ -371,7 +370,7 @@ export default function SectionDesignMapper({ sections: initialSections, dnaLibr
                           deviceFrame: s.designRef?.deviceFrame || null,
                           elementIndices: indices,
                         },
-                        mode: s.mode === "none" ? "reference" : s.mode,
+                        mode: s.mode === "none" ? "clone" : s.mode,
                       }
                     : s
                 )

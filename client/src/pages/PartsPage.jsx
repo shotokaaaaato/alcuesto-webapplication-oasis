@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { downloadAsZip } from "../utils/zipDownloader";
+import CircularProgress from "../components/CircularProgress";
 
 const CATEGORIES = [
   { value: "all", label: "すべて" },
@@ -243,9 +244,15 @@ export default function PartsPage() {
 
         {/* Loading */}
         {loading && (
-          <div className="text-center py-16">
-            <div className="inline-block w-8 h-8 border-3 border-[#ef4444]/30 border-t-[#ef4444] rounded-full animate-spin" />
-            <p className="text-xs text-[#C49A6C] mt-3">パーツを読み込み中...</p>
+          <div className="flex justify-center py-16">
+            <CircularProgress
+              progress={30}
+              size={80}
+              strokeWidth={6}
+              label="パーツを読み込み中..."
+              accentFrom="#ef4444"
+              accentTo="#dc2626"
+            />
           </div>
         )}
 

@@ -5,21 +5,8 @@ import Editor from "@monaco-editor/react";
 import { useAuth } from "../context/AuthContext";
 import { useApiKeys } from "../hooks/useApiKeys";
 import ModelSelector from "../components/ModelSelector";
-
-const PLACEHOLDER_CODE = `// デザインソースを選択して「AI でリファクタ」を実行してください
-// React + Tailwind コンポーネントがここに表示されます
-
-import React from 'react';
-
-export default function DesignComponent() {
-  return (
-    <div className="p-8 text-center text-gray-400">
-      コード未生成
-    </div>
-  );
-}`;
-
-const PLACEHOLDER_PREVIEW = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-family:sans-serif;">プレビュー未生成</div>`;
+import CircularProgress from "../components/CircularProgress";
+import { PLACEHOLDER_CODE, PLACEHOLDER_PREVIEW } from "../constants/placeholders";
 
 export default function SemanticExporterPage() {
   const navigate = useNavigate();
@@ -423,21 +410,14 @@ export default function SemanticExporterPage() {
               disabled={loading || dnaList.length === 0}
               className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#D4A76A] to-[#B8944C] text-white text-sm font-bold tracking-wide shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  AI generating...
-                </span>
-              ) : (
-                "AI Refactor"
-              )}
+              {loading ? "AI 生成中..." : "AI Refactor"}
             </button>
             <button
               onClick={handleGenerateConfig}
               disabled={configLoading || dnaList.length === 0}
               className="px-5 py-3 rounded-xl border-2 border-[#D4A76A]/40 text-[#B8944C] text-sm font-bold hover:bg-[#D4A76A]/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              {configLoading ? "Generating..." : "Tailwind Config"}
+              {configLoading ? "生成中..." : "Tailwind Config"}
             </button>
           </div>
         </motion.div>
@@ -499,9 +479,23 @@ export default function SemanticExporterPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex gap-4"
+          className="flex gap-4 relative"
           style={{ height: "calc(100vh - 310px)" }}
         >
+          {/* Loading overlay */}
+          {(loading || configLoading) && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-2xl">
+              <CircularProgress
+                progress={loading || configLoading ? 50 : 0}
+                size={100}
+                strokeWidth={7}
+                label={loading ? "AI コンポーネント生成中..." : "Tailwind Config 生成中..."}
+                sublabel="しばらくお待ちください"
+                accentFrom="#D4A76A"
+                accentTo="#B8944C"
+              />
+            </div>
+          )}
           {/* Left: Monaco Editor */}
           <div className="flex-1 rounded-2xl overflow-hidden border border-[#E8D5B0]/50 shadow-sm bg-white">
             <div className="px-4 py-2 bg-white/80 border-b border-[#E8D5B0]/50 flex items-center justify-between">

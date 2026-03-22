@@ -197,6 +197,9 @@ export default function DesignPreviewModal({
                 <p className="text-[12px] text-[#8A7E6B] mt-0.5">
                   「{dna?.name || ""}」からこのセクションに使う部分をクリックで選択
                 </p>
+                <p className="text-[11px] text-[#C49A6C] mt-1">
+                  ここでは範囲の選択のみ。文字の編集は確定後の「ライブエディタ」で行えます
+                </p>
               </div>
               <button
                 onClick={onClose}

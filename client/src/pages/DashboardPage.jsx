@@ -21,6 +21,15 @@ const MENU_CARDS = [
     color: "from-[#3aafc9] to-[#2a8fa9]",
     span: "col-span-2",
   },
+  {
+    id: "url-import",
+    title: "URL インポート",
+    desc: "Web ページを 3 ビューポートで解析し完全再現データとして保存",
+    icon: "🌐",
+    color: "from-[#3b82f6] to-[#2563eb]",
+    span: "col-span-1",
+    adminOnly: true,
+  },
   // ── 第2グループ（資産・分析系） ──
   {
     id: "parts",
@@ -106,6 +115,7 @@ export default function DashboardPage() {
     if (id === "parts") navigate("/parts");
     if (id === "library") navigate("/library");
     if (id === "settings") navigate("/settings");
+    if (id === "url-import") navigate("/url-import");
   }
 
   function handleLogout() {
@@ -182,7 +192,7 @@ export default function DashboardPage() {
           animate="show"
           className="grid grid-cols-4 gap-4 auto-rows-[180px]"
         >
-          {MENU_CARDS.map((card) => (
+          {MENU_CARDS.filter(card => !card.adminOnly || isAdmin).map((card) => (
             <motion.div
               key={card.id}
               variants={cardVariants}

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Text, Float, Environment, MeshTransmissionMaterial } from "@react-three/drei";
 import * as THREE from "three";
+import CircularProgress from "../components/CircularProgress";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -564,7 +565,14 @@ export default function AnalyticsPage() {
       <div className="flex-1 relative">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center z-10 bg-[#FAF3E6]/80">
-            <p className="text-[#8B6914] text-sm tracking-widest animate-pulse">Loading analytics...</p>
+            <CircularProgress
+              progress={30}
+              size={80}
+              strokeWidth={6}
+              label="アナリティクスを読み込み中..."
+              accentFrom="#3aafc9"
+              accentTo="#2a8fa9"
+            />
           </div>
         )}
 

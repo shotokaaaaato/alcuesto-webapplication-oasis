@@ -205,6 +205,26 @@ function updateDnaPageStructure(id, pageStructure) {
 }
 
 /**
+ * IDで特定のデザインレコードの elements を更新（Re-scan 用）
+ * @param {string} id
+ * @param {Array} elements
+ * @param {object|null} masterImage
+ * @param {object|null} bodyBackground - { backgroundColor, backgroundImage, background }
+ * @returns {object|null}
+ */
+function updateDnaElements(id, elements, masterImage, bodyBackground) {
+  const library = readDnaLibrary();
+  const idx = library.findIndex((d) => d.id === id);
+  if (idx === -1) return null;
+  library[idx].elements = elements;
+  library[idx].elementCount = elements.length;
+  if (masterImage) library[idx].masterImage = masterImage;
+  if (bodyBackground) library[idx].bodyBackground = bodyBackground;
+  writeDnaLibrary(library);
+  return library[idx];
+}
+
+/**
  * 複数IDのデザインレコードを一括削除
  * @param {string[]} ids
  * @returns {number} 削除件数
@@ -219,4 +239,4 @@ function deleteDnaByIds(ids) {
   return before - filtered.length;
 }
 
-module.exports = { readDnaLibrary, saveDna, getLatestDna, getAllDna, getAllDnaFull, getDnaById, updateDnaName, updateDnaLockedParts, updateDnaMasterImage, updateDnaType, updateDnaDeviceFrames, updateDnaPageStructure, deleteDnaById, deleteDnaByIds };
+module.exports = { readDnaLibrary, saveDna, getLatestDna, getAllDna, getAllDnaFull, getDnaById, updateDnaName, updateDnaLockedParts, updateDnaMasterImage, updateDnaType, updateDnaDeviceFrames, updateDnaPageStructure, updateDnaElements, deleteDnaById, deleteDnaByIds };

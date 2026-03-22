@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useApiKeys } from "../hooks/useApiKeys";
-
-const FIGMA_URL_REGEX =
-  /figma\.com\/(?:file|design)\/([a-zA-Z0-9]+)/;
+import CircularProgress from "../components/CircularProgress";
+import { FIGMA_URL_REGEX } from "../utils/figma";
 
 export default function FigmaImportPage() {
   const navigate = useNavigate();
@@ -366,16 +365,29 @@ export default function FigmaImportPage() {
               )}
             </div>
 
-            <button
-              onClick={fetchStructure}
-              disabled={!figmaToken || !fileKey || loadingStructure}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#3aafc9] to-[#2a8fa9]
-                         text-white text-sm font-['Noto_Sans_JP'] shadow-md
-                         hover:shadow-lg transition-all active:scale-95
-                         disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loadingStructure ? "取得中..." : "ページ一覧を取得"}
-            </button>
+            {loadingStructure ? (
+              <div className="flex items-center gap-4 py-2">
+                <CircularProgress
+                  progress={40}
+                  size={56}
+                  strokeWidth={4}
+                  label="ページ構造を取得中..."
+                  accentFrom="#3aafc9"
+                  accentTo="#2a8fa9"
+                />
+              </div>
+            ) : (
+              <button
+                onClick={fetchStructure}
+                disabled={!figmaToken || !fileKey}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#3aafc9] to-[#2a8fa9]
+                           text-white text-sm font-['Noto_Sans_JP'] shadow-md
+                           hover:shadow-lg transition-all active:scale-95
+                           disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ページ一覧を取得
+              </button>
+            )}
           </div>
         </motion.section>
 
@@ -648,16 +660,30 @@ export default function FigmaImportPage() {
 
                         <div className="px-4 pb-4">
                           {!extractResult ? (
-                            <button
-                              onClick={extractPairedDna}
-                              disabled={!pcFrame || loadingDna}
-                              className="w-full px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#3aafc9] to-[#2a8fa9]
-                                         text-white text-sm font-['Noto_Sans_JP'] shadow-md
-                                         hover:shadow-lg transition-all active:scale-95
-                                         disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {loadingDna ? "デザイン抽出中..." : "デザインを抽出"}
-                            </button>
+                            loadingDna ? (
+                              <div className="flex justify-center py-3">
+                                <CircularProgress
+                                  progress={60}
+                                  size={64}
+                                  strokeWidth={5}
+                                  label="デザインを抽出中..."
+                                  sublabel="Figma API からデータを取得しています"
+                                  accentFrom="#3aafc9"
+                                  accentTo="#2a8fa9"
+                                />
+                              </div>
+                            ) : (
+                              <button
+                                onClick={extractPairedDna}
+                                disabled={!pcFrame}
+                                className="w-full px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#3aafc9] to-[#2a8fa9]
+                                           text-white text-sm font-['Noto_Sans_JP'] shadow-md
+                                           hover:shadow-lg transition-all active:scale-95
+                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                デザインを抽出
+                              </button>
+                            )
                           ) : (
                             <div className="space-y-2">
                               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#3aafc9]/10 border border-[#3aafc9]/30">
@@ -742,18 +768,28 @@ export default function FigmaImportPage() {
                                 {selectedFrame.type} — ID: {selectedFrame.id}
                               </p>
                               {!extractedDna ? (
-                                <button
-                                  onClick={extractFrameDna}
-                                  disabled={loadingDna}
-                                  className="mt-4 w-full px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#3aafc9] to-[#2a8fa9]
-                                             text-white text-sm font-['Noto_Sans_JP'] shadow-md
-                                             hover:shadow-lg transition-all active:scale-95
-                                             disabled:opacity-50"
-                                >
-                                  {loadingDna
-                                    ? "デザイン抽出中..."
-                                    : `「${selectedFrame.name}」をグラフィックとして抽出`}
-                                </button>
+                                loadingDna ? (
+                                  <div className="flex justify-center py-4">
+                                    <CircularProgress
+                                      progress={60}
+                                      size={64}
+                                      strokeWidth={5}
+                                      label="デザインを抽出中..."
+                                      sublabel="Figma API からデータを取得しています"
+                                      accentFrom="#3aafc9"
+                                      accentTo="#2a8fa9"
+                                    />
+                                  </div>
+                                ) : (
+                                  <button
+                                    onClick={extractFrameDna}
+                                    className="mt-4 w-full px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#3aafc9] to-[#2a8fa9]
+                                               text-white text-sm font-['Noto_Sans_JP'] shadow-md
+                                               hover:shadow-lg transition-all active:scale-95"
+                                  >
+                                    {`「${selectedFrame.name}」をグラフィックとして抽出`}
+                                  </button>
+                                )
                               ) : (
                                 <div className="mt-4 space-y-2">
                                   <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#3aafc9]/10 border border-[#3aafc9]/30">

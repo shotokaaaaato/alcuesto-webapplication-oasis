@@ -13,6 +13,7 @@ import FigmaGuidePage from "./pages/FigmaGuidePage";
 import PartsPage from "./pages/PartsPage";
 import CodeLibraryPage from "./pages/CodeLibraryPage";
 import CompositionWizardPage from "./pages/CompositionWizardPage";
+import UrlImportPage from "./pages/UrlImportPage";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -117,6 +118,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <CompositionWizardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/url-import"
+        element={
+          <ProtectedRoute>
+            <UrlImportPage />
           </ProtectedRoute>
         }
       />

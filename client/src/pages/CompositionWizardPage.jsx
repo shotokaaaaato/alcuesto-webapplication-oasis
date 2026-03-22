@@ -6,7 +6,6 @@ import { useApiKeys } from "../hooks/useApiKeys";
 import PageInitModal from "../components/composition/PageInitModal";
 import StructurePlannerPanel from "../components/composition/StructurePlannerPanel";
 import SectionDesignMapper from "../components/composition/SectionDesignMapper";
-import ReferenceConfigPanel from "../components/composition/ReferenceConfigPanel";
 import CompositionPreviewPanel from "../components/composition/CompositionPreviewPanel";
 import PageOptimizerModal from "../components/composition/PageOptimizerModal";
 
@@ -14,8 +13,7 @@ const STEPS = [
   { id: 1, label: "初期設定" },
   { id: 2, label: "構成プランニング" },
   { id: 3, label: "デザインマッピング" },
-  { id: 4, label: "詳細設定" },
-  { id: 5, label: "セクション生成" },
+  { id: 5, label: "ライブ編集" },
   { id: 6, label: "最終最適化" },
 ];
 
@@ -35,20 +33,12 @@ export default function CompositionWizardPage() {
   // ── Step 2: セクション構成 ──
   const [sections, setSections] = useState([]);
 
-  // ── Step 3+4: デザインライブラリ ──
+  // ── Step 3: デザインライブラリ ──
   const [dnaLibrary, setDnaLibrary] = useState([]);
   const [libraryLoading, setLibraryLoading] = useState(false);
 
-  // ── Step 5: 生成結果 ──
-  const [generatedSections, setGeneratedSections] = useState([]);
-
   // ── Step 6: 最適化結果 ──
   const [assembledHtml, setAssembledHtml] = useState("");
-  const [optimizedHtml, setOptimizedHtml] = useState("");
-  const [optimizeChanges, setOptimizeChanges] = useState([]);
-
-  // ── Final ──
-  const [finalCode, setFinalCode] = useState("");
 
   const headers = {
     "Content-Type": "application/json",
@@ -87,33 +77,21 @@ export default function CompositionWizardPage() {
     setWizardStep(3);
   };
 
-  // Step 3 完了
+  // Step 3 完了 → Step 4 をスキップし直接 Step 5（ライブ編集）へ
   const handleMappingComplete = (mappedSections) => {
     setSections(mappedSections);
-    // デザイン参考 or デザイン付き完全再現があれば Step 4（詳細設定）へ、なければ Step 5 へ
-    const needsConfig = mappedSections.some(
-      (s) => s.mode === "reference" || (s.mode === "clone" && s.designRef?.dnaId)
-    );
-    setWizardStep(needsConfig ? 4 : 5);
-  };
-
-  // Step 4 完了
-  const handleConfigComplete = (configuredSections) => {
-    setSections(configuredSections);
     setWizardStep(5);
   };
 
   // Step 5 完了
   const handleGenerationComplete = (results, assembled) => {
-    setGeneratedSections(results);
+    setSections(results);
     setAssembledHtml(assembled);
     setWizardStep(6);
   };
 
   // Step 6 完了（保存）
   const handleOptimizeComplete = async (html, code) => {
-    setOptimizedHtml(html);
-    setFinalCode(code);
     try {
       await fetch("/api/compose/save-project", {
         method: "POST",
@@ -186,7 +164,7 @@ export default function CompositionWizardPage() {
                         : "bg-white/50 text-[#8A7E6B] border border-[#E8D5B0]/50"
                     }`}
                   >
-                    {isDone ? "✓" : step.id}
+                    {isDone ? "✓" : i + 1}
                   </div>
                   <span
                     className={`text-[10px] mt-1 whitespace-nowrap ${
@@ -241,15 +219,6 @@ export default function CompositionWizardPage() {
               />
             </motion.div>
           )}
-          {wizardStep === 4 && (
-            <motion.div key="step4" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
-              <ReferenceConfigPanel
-                sections={sections}
-                onComplete={handleConfigComplete}
-                onBack={() => setWizardStep(3)}
-              />
-            </motion.div>
-          )}
           {wizardStep === 5 && (
             <motion.div key="step5" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.3 }}>
               <CompositionPreviewPanel
@@ -261,10 +230,7 @@ export default function CompositionWizardPage() {
                 imageMode={imageMode}
                 headers={headers}
                 onComplete={handleGenerationComplete}
-                onBack={() => {
-                  const hasRef = sections.some((s) => s.mode === "reference");
-                  setWizardStep(hasRef ? 4 : 3);
-                }}
+                onBack={() => setWizardStep(3)}
               />
             </motion.div>
           )}

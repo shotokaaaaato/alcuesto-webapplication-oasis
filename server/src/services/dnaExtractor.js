@@ -32,6 +32,8 @@ const LAYOUT_PROPS = [
 
 const VISUAL_PROPS = [
   "backgroundColor",
+  "background",
+  "backgroundImage",
   "borderRadius",
   "border",
   "boxShadow",
@@ -278,4 +280,4 @@ async function closeBrowser() {
   }
 }
 
-module.exports = { extractDNA, extractPageDNA, closeBrowser };
+module.exports = { extractDNA, extractPageDNA, closeBrowser, getBrowser };

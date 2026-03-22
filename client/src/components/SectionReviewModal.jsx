@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import CircularProgress from "./CircularProgress";
 
 /**
  * セクション別レビューモーダル
@@ -420,19 +421,44 @@ ${remainingHtml}
               {/* Actions */}
               <div className="mt-auto space-y-2">
                 {current?.partConfig?.mode === "clone" && current?.status !== "done" && (
-                  <div className="text-center text-[12px] text-[#8A7E6B] py-2">
-                    {generating ? "再現パーツを生成中..." : "自動生成されます"}
+                  <div className="flex flex-col items-center py-2">
+                    {generating ? (
+                      <CircularProgress
+                        progress={Math.round((approvedCount / sections.length) * 100)}
+                        size={56}
+                        strokeWidth={4}
+                        label="再現パーツを生成中..."
+                        sublabel={`${approvedCount} / ${sections.length}`}
+                        accentFrom="#3b82f6"
+                        accentTo="#2563eb"
+                      />
+                    ) : (
+                      <p className="text-[12px] text-[#8A7E6B]">自動生成されます</p>
+                    )}
                   </div>
                 )}
 
                 {current?.status === "pending" && !current?.partConfig?.mode?.startsWith("clone") && (
-                  <button
-                    onClick={generateCurrentSection}
-                    disabled={generating}
-                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white text-[13px] font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50 active:scale-95"
-                  >
-                    {generating ? "生成中..." : `「${current.label}」を生成`}
-                  </button>
+                  generating ? (
+                    <div className="flex justify-center py-2">
+                      <CircularProgress
+                        progress={Math.round((approvedCount / sections.length) * 100)}
+                        size={56}
+                        strokeWidth={4}
+                        label={`「${current.label}」を生成中...`}
+                        sublabel={`${approvedCount} / ${sections.length} 完了`}
+                        accentFrom="#7c3aed"
+                        accentTo="#6d28d9"
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      onClick={generateCurrentSection}
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#7c3aed] to-[#6d28d9] text-white text-[13px] font-semibold shadow-md hover:shadow-lg transition-all active:scale-95"
+                    >
+                      {`「${current.label}」を生成`}
+                    </button>
+                  )
                 )}
 
                 {current?.status === "done" && !current?.partConfig?.mode?.startsWith("clone") && (
@@ -463,13 +489,25 @@ ${remainingHtml}
                 )}
 
                 {allDone && approvedCount > 0 && (
-                  <button
-                    onClick={assemblePage}
-                    disabled={generating}
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-white text-[14px] font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 active:scale-95"
-                  >
-                    {generating ? "組み立て中..." : "ページを組み立て"}
-                  </button>
+                  generating ? (
+                    <div className="flex justify-center py-2">
+                      <CircularProgress
+                        progress={90}
+                        size={56}
+                        strokeWidth={4}
+                        label="ページを組み立て中..."
+                        accentFrom="#f59e0b"
+                        accentTo="#d97706"
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      onClick={assemblePage}
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-white text-[14px] font-bold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                    >
+                      ページを組み立て
+                    </button>
+                  )
                 )}
               </div>
             </div>

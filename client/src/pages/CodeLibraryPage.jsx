@@ -6,21 +6,8 @@ import { useAuth } from "../context/AuthContext";
 import { useApiKeys } from "../hooks/useApiKeys";
 import ModelSelector from "../components/ModelSelector";
 import { downloadAsZip } from "../utils/zipDownloader";
-
-const PLACEHOLDER_CODE = `// デザインソースを選択して「AI でリファクタ」を実行してください
-// React + Tailwind コンポーネントがここに表示されます
-
-import React from 'react';
-
-export default function DesignComponent() {
-  return (
-    <div className="p-8 text-center text-gray-400">
-      コード未生成
-    </div>
-  );
-}`;
-
-const PLACEHOLDER_PREVIEW = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-family:sans-serif;">プレビュー未生成</div>`;
+import CircularProgress from "../components/CircularProgress";
+import { PLACEHOLDER_CODE, PLACEHOLDER_PREVIEW } from "../constants/placeholders";
 
 function sanitizeFileName(name) {
   return name.replace(/[^a-zA-Z0-9_-]/g, "_").replace(/_+/g, "_").slice(0, 50) || "Component";
@@ -403,14 +390,14 @@ export default function CodeLibraryPage() {
                 disabled={loading || dnaList.length === 0}
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#D4A76A] to-[#B8944C] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50"
               >
-                {loading ? "AI generating..." : "AI Refactor"}
+                {loading ? "AI 生成中..." : "AI Refactor"}
               </button>
               <button
                 onClick={handleGenerateConfig}
                 disabled={configLoading || dnaList.length === 0}
                 className="px-4 py-2.5 rounded-xl border border-[#D4A76A]/40 text-[#B8944C] text-xs font-bold hover:bg-[#D4A76A]/10 transition-all disabled:opacity-50"
               >
-                {configLoading ? "Generating..." : "Tailwind Config"}
+                {configLoading ? "生成中..." : "Tailwind Config"}
               </button>
             </div>
           </motion.div>
@@ -488,7 +475,21 @@ export default function CodeLibraryPage() {
           </div>
 
           {/* Editor + Preview Split */}
-          <div className="flex gap-3 flex-1 min-h-0">
+          <div className="flex gap-3 flex-1 min-h-0 relative">
+            {/* Loading overlay */}
+            {(loading || configLoading) && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-2xl">
+                <CircularProgress
+                  progress={50}
+                  size={100}
+                  strokeWidth={7}
+                  label={loading ? "AI コンポーネント生成中..." : "Tailwind Config 生成中..."}
+                  sublabel="しばらくお待ちください"
+                  accentFrom="#D4A76A"
+                  accentTo="#B8944C"
+                />
+              </div>
+            )}
             {/* Monaco Editor */}
             <div className="flex-1 rounded-2xl overflow-hidden border border-[#E8D5B0]/50 shadow-sm bg-white">
               <Editor
@@ -546,8 +547,15 @@ export default function CodeLibraryPage() {
 
           <div className="flex-1 overflow-y-auto space-y-2 pr-1">
             {savedCodesLoading && (
-              <div className="text-center py-8">
-                <div className="inline-block w-5 h-5 border-2 border-[#D4A76A]/30 border-t-[#D4A76A] rounded-full animate-spin" />
+              <div className="flex justify-center py-8">
+                <CircularProgress
+                  progress={30}
+                  size={56}
+                  strokeWidth={4}
+                  label="読み込み中..."
+                  accentFrom="#D4A76A"
+                  accentTo="#B8944C"
+                />
               </div>
             )}
 

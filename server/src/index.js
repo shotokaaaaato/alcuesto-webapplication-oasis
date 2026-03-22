@@ -8,6 +8,7 @@ const figmaRoutes = require("./routes/figma");
 const exportRoutes = require("./routes/export");
 const analyticsRoutes = require("./routes/analytics");
 const composeRoutes = require("./routes/compose");
+const urlImportRoutes = require("./routes/urlImport");
 const { findByEmail, createUser } = require("./models/userStore");
 const { closeBrowser } = require("./services/dnaExtractor");
 
@@ -28,7 +29,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 
 // マスター画像の静的配信
 app.use("/api/images", express.static(path.join(__dirname, "../data/images")));
@@ -55,6 +56,9 @@ app.use("/api/analytics", analyticsRoutes);
 
 // Composition Wizard API
 app.use("/api/compose", composeRoutes);
+
+// URL Import API (管理者専用)
+app.use("/api/url-import", urlImportRoutes);
 
 // 管理者シード
 async function seedAdmin() {
